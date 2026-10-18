@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mohamed Eid | Quality Control Specialist</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; }
+        .dark-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.35);
+        }
+        .active-tab {
+            background-color: #0284c7;
+            color: white;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.4);
+        }
+        @media print {
+            body * { visibility: hidden; }
+            #branchAuditPanel, #branchAuditPanel * { visibility: visible; }
+            #branchAuditPanel { position: absolute; left: 0; top: 0; width: 100%; border: none; box-shadow: none; background: white; color: black; }
+            .no-print { display: none !important; }
+        }
+    </style>
+</head>
+<body class="bg-[#0f172a] text-slate-100 min-h-screen flex flex-col justify-between">
+
+    <!-- Top Navigation Bar -->
+    <header class="sticky top-0 z-50 bg-[#1e293b] border-b border-slate-700 shadow-md no-print">
+        <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-lg bg-[#0284c7] flex items-center justify-center font-black text-xl text-white shadow-md">
+                    ME
+                </div>
+                <div>
+                    <h1 class="font-bold text-white leading-none">MOHAMED EID</h1>
+                    <span class="text-xs text-[#38bdf8] font-semibold">Quality Control Specialist</span>
+                </div>
+            </div>
+
+            <!-- Page Switcher & Admin Login -->
+            <div class="flex items-center gap-3">
+                <div class="flex bg-slate-900/90 p-1.5 rounded-xl border border-slate-700">
+                    <button id="btnPageCv" onclick="switchPage('cvPage')" class="active-tab px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-user-tie"></i> Resume (CV)
+                    </button>
+                    <button id="btnPageAudits" onclick="switchPage('auditsPage')" class="px-4 py-2 rounded-lg text-xs md:text-sm font-semibold text-slate-300 hover:text-white transition-all flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-check"></i> Daily Audits
+                    </button>
+                </div>
+
+                <!-- Admin Login Button -->
+                <button id="adminLoginBtn" onclick="toggleAdminMode()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all" title="دخول الإدارة (خاص بمحمد)">
+                    <i class="fa-solid fa-lock text-amber-400" id="adminIcon"></i> <span id="adminText" class="hidden md:inline">الإدارة</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 md:p-6 flex-grow w-full">
+
+        <!-- ========================================== -->
+        <!-- PAGE 1: RESUME / CV PAGE                   -->
+        <!-- ========================================== -->
+        <div id="cvPage" class="space-y-8">
+            
+            <!-- Header Section -->
+            <div class="dark-card rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 border-sky-500/30">
+                
+                <!-- Logo Box -->
+                <div class="relative group">
+                    <div class="w-36 h-36 md:w-44 md:h-44 rounded-2xl bg-black border-2 border-slate-700 flex flex-col items-center justify-center p-2 text-center shadow-inner overflow-hidden">
+                        <img id="logoPreview" src="" alt="ME Logo" class="hidden w-full h-full object-contain">
+                        <div id="logoPlaceholder" class="flex flex-col items-center">
+                            <i class="fa-solid fa-chart-line text-4xl text-[#0284c7] mb-1"></i>
+                            <span class="font-black text-2xl text-[#38bdf8] tracking-wider">ME</span>
+                            <span class="text-[9px] text-slate-400 font-medium">MOHAMED EID</span>
+                        </div>
+                    </div>
+                    <!-- Upload allowed only in Admin Mode -->
+                    <label id="logoUploadLabel" class="absolute inset-0 bg-black/70 rounded-2xl text-xs text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer font-semibold hidden admin-only">
+                        <i class="fa-solid fa-upload mr-1"></i> Change Logo
+                        <input type="file" accept="image/*" class="hidden" onchange="uploadLogo(event)">
+                    </label>
+                </div>
+
+                <!-- Name & Contact Info -->
+                <div class="flex-grow text-center md:text-left space-y-3">
+                    <div>
+                        <h2 class="text-3xl md:text-4xl font-extrabold text-white tracking-wide">MOHAMED EID MOHAMED BARAKAT</h2>
+                        <p class="text-[#38bdf8] font-bold text-lg mt-1">Quality Control & Audit Specialist</p>
+                    </div>
+
+                    <div class="flex flex-wrap justify-center md:justify-start gap-3 text-xs md:text-sm text-slate-300 pt-3 border-t border-slate-700">
+                        <span class="flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700">
+                            <i class="fa-solid fa-phone text-[#38bdf8]"></i> +966 501 103 782
+                        </span>
+                        <span class="flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700">
+                            <i class="fa-solid fa-envelope text-[#38bdf8]"></i> Hamadabarakat380@gmail.com
+                        </span>
+                        <span class="flex items-center gap-2 bg-slate-900 px-3 py-1.5 rounded-lg border border-slate-700">
+                            <i class="fa-solid fa-location-dot text-[#38bdf8]"></i> Dammam, KSA
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Professional Summary -->
+            <div class="dark-card rounded-2xl p-6 md:p-8 space-y-3">
+                <h3 class="text-xl font-bold text-[#38bdf8] flex items-center gap-2 border-b border-slate-700 pb-3">
+                    <i class="fa-solid fa-user text-[#0284c7]"></i> Professional Summary
+                </h3>
+                <p class="text-slate-300 leading-relaxed text-sm md:text-base">
+                    Dedicated Quality Control & Operations Audit Specialist with over 2 years of proven expertise in the food manufacturing & retail sector. Demonstrated success across diverse operational environments as a Quality Inspector and Field Auditor. Highly skilled in implementing international food safety systems including ISO 22000 and HACCP, root-cause analysis, non-conformity documentation, and comprehensive quality reporting. Passionate about continuous improvement, risk prevention, and ensuring the highest standards of food safety and customer satisfaction.
+                </p>
+            </div>
+
+            <!-- Work Experience -->
+            <div class="dark-card rounded-2xl p-6 md:p-8 space-y-6">
+                <h3 class="text-xl font-bold text-[#38bdf8] flex items-center gap-2 border-b border-slate-700 pb-3">
+                    <i class="fa-solid fa-briefcase text-[#0284c7]"></i> Work Experience
+                </h3>
+
+                <div class="relative pl-6 border-l-2 border-[#0284c7] space-y-6">
+                    <div class="relative">
+                        <div class="absolute -left-[31px] top-1.5 w-4 h-4 rounded-full bg-[#0284c7] border-4 border-[#0f172a]"></div>
+                        <div class="flex flex-col md:flex-row md:items-center justify-between">
+                            <h4 class="text-lg font-bold text-white">Quality Control & Audit Specialist</h4>
+                            <span class="text-xs font-semibold px-3 py-1 bg-sky-500/20 text-sky-300 rounded-full w-fit border border-sky-500/30">Feb 2024 – Present</span>
+                        </div>
+                        <p class="text-sm font-semibold text-slate-400 mt-0.5">Saadeddin Pastry (شركة سعد الدين للحلويات) - KSA</p>
+                        
+                        <ul class="list-disc list-inside text-slate-300 text-sm mt-3 space-y-2">
+                            <li>Conducting field quality inspections across retail branches to ensure strict adherence to quality and food safety standards.</li>
+                            <li>Training new personnel on quality policies, hygiene practices, and work ethics to ensure smooth team onboarding.</li>
+                            <li>Providing continuous technical support and supervision to field teams to maintain top-tier product compliance.</li>
+                            <li>Developing periodic monitoring logs for near-expiry products, significantly reducing waste.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Courses & Certifications + Achievements -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="dark-card rounded-2xl p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-[#38bdf8] flex items-center gap-2 border-b border-slate-700 pb-3">
+                        <i class="fa-solid fa-certificate text-[#0284c7]"></i> Certifications & Courses
+                    </h3>
+                    <ul class="space-y-3 text-sm text-slate-300">
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-[#38bdf8] mt-1"></i>
+                            <span><strong>HACCP System:</strong> Hazard Analysis & Critical Control Points in Food Facilities.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-[#38bdf8] mt-1"></i>
+                            <span><strong>ISO 22000:</strong> Practical implementation of Food Safety Management Systems.</span>
+                        </li>
+                        <li class="flex items-start gap-2.5">
+                            <i class="fa-solid fa-circle-check text-[#38bdf8] mt-1"></i>
+                            <span><strong>Field Inspection Skills:</strong> Modern audit techniques & compliance evaluation standards.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="dark-card rounded-2xl p-6 space-y-4">
+                    <h3 class="text-lg font-bold text-[#38bdf8] flex items-center gap-2 border-b border-slate-700 pb-3">
+                        <i class="fa-solid fa-trophy text-[#0284c7]"></i> Achievements & Education
+                    </h3>
+                    <div class="space-y-3 text-sm text-slate-300">
+                        <div class="p-3 bg-sky-950/40 border border-sky-500/30 rounded-xl">
+                            <span class="text-xs font-bold text-[#38bdf8] block uppercase">Key Accomplishment</span>
+                            <p class="font-semibold text-white mt-0.5">Reduced POS compliance violations by 30% within 6 months.</p>
+                        </div>
+                        <div class="pt-2">
+                            <span class="text-xs text-slate-400 block font-semibold uppercase">Education</span>
+                            <p class="font-bold text-white">Bachelor's Degree in Commerce</p>
+                            <p class="text-xs text-slate-400">Kafrelsheikh University</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ========================================== -->
+        <!-- PAGE 2: DAILY AUDITS (المراجعات اليومية)     -->
+        <!-- ========================================== -->
+        <div id="auditsPage" class="hidden space-y-8">
+            
+            <!-- Header & Add Branch Control -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 dark-card p-6 rounded-2xl no-print">
+                <div>
+                    <h2 class="text-2xl font-black text-white">Daily Branch Audits Dashboard</h2>
+                    <p class="text-xs text-slate-400 mt-1">إدارة وتقييم فروع الحلويات ومتابعة تطور الأداء والزيارات</p>
+                </div>
+                
+                <!-- Add branch visible only in admin mode -->
+                <button onclick="openAddBranchModal()" class="bg-[#0284c7] hover:bg-[#0369a1] text-white font-bold px-4 py-2.5 rounded-xl shadow-lg transition-all flex items-center justify-center gap-2 text-sm hidden admin-only">
+                    <i class="fa-solid fa-plus"></i> إضافة فرع جديد (Add Branch)
+                </button>
+            </div>
+
+            <!-- Branches Grid -->
+            <div id="branchesGrid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 no-print">
+                <!-- Dynamic Branch Cards -->
+            </div>
+
+            <!-- Active Branch Audit Panel -->
+            <div id="branchAuditPanel" class="hidden dark-card p-6 rounded-2xl space-y-6 border-sky-500/40 shadow-xl">
+                <div class="flex justify-between items-center border-b border-slate-700 pb-4">
+                    <div class="flex items-center gap-3">
+                        <div id="panelBranchIcon" class="w-12 h-12 rounded-xl bg-sky-600/30 border border-sky-400 flex items-center justify-center text-sky-400 text-2xl">
+                            <i class="fa-solid fa-store"></i>
+                        </div>
+                        <div>
+                            <h3 id="panelBranchName" class="text-xl font-bold text-white">Branch Name</h3>
+                            <span id="panelBranchCode" class="text-xs text-slate-400">Code: #001</span>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-2 no-print">
+                        <button onclick="exportBranchPDF()" class="text-emerald-400 hover:text-emerald-300 text-xs font-semibold px-3 py-2 bg-emerald-950/40 border border-emerald-500/30 rounded-xl flex items-center gap-1.5">
+                            <i class="fa-solid fa-file-pdf"></i> تصدير PDF
+                        </button>
+                        <!-- Delete branch visible only in admin mode -->
+                        <button onclick="deleteCurrentBranch()" class="text-red-400 hover:text-red-300 text-xs font-semibold px-3 py-2 bg-red-950/40 border border-red-500/30 rounded-xl hidden admin-only">
+                            <i class="fa-solid fa-trash"></i> حذف الفرع
+                        </button>
+                        <button onclick="closeBranchPanel()" class="text-slate-400 hover:text-white p-2">
+                            <i class="fa-solid fa-xmark text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Audit Visits History Section -->
+                <div class="space-y-4">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-[#38bdf8] text-sm tracking-wide uppercase">سجل الزيارات والتقييمات (Audit Visits)</h4>
+                        <!-- Add visit visible only in admin mode -->
+                        <button onclick="addNewVisitRecord()" class="bg-sky-500/20 hover:bg-sky-500/40 text-sky-300 border border-sky-500/40 font-bold px-3 py-1.5 rounded-lg text-xs transition-all flex items-center gap-1 hidden admin-only">
+                            <i class="fa-solid fa-calendar-plus"></i> إضافة زيارة جديدة
+                        </button>
+                    </div>
+
+                    <!-- Visits Cards Container -->
+                    <div id="visitsContainer" class="space-y-6"></div>
+                </div>
+
+                <!-- Performance Evaluation Charts Section -->
+                <div class="pt-6 border-t border-slate-700 space-y-6">
+                    <div class="space-y-3">
+                        <h4 class="font-bold text-[#38bdf8] text-sm tracking-wide uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-chart-bar text-[#0284c7]"></i> مقارنة تقييمات الزيارات (Rating Comparison)
+                        </h4>
+                        <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-700 h-44 relative">
+                            <canvas id="ratingsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3 pt-2">
+                        <h4 class="font-bold text-red-400 text-sm tracking-wide uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-chart-line"></i> منحنى التغير في الأداء عبر كافة الزيارات (Performance Trend Line)
+                        </h4>
+                        <div class="p-3 rounded-xl bg-slate-900/90 border border-slate-700 h-52 relative">
+                            <canvas id="trendChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Modal: Add Branch -->
+    <div id="addBranchModal" class="fixed inset-0 bg-slate-950/70 backdrop-blur-xs hidden z-50 flex items-center justify-center p-4">
+        <div class="dark-card w-full max-w-md rounded-2xl p-6 space-y-4 border-slate-700 shadow-2xl">
+            <h3 class="text-lg font-bold text-white">إضافة فرع جديد</h3>
+            <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">اسم الفرع (Branch Name)</label>
+                <input type="text" id="newBranchName" placeholder="مثال: فرع الشاطئ - الدمام" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-white outline-none focus:border-sky-500">
+            </div>
+            <div>
+                <label class="text-xs font-semibold text-slate-300 block mb-1">اختر الأيقونة (Select Icon)</label>
+                <select id="newBranchIcon" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-2.5 text-sm text-white outline-none focus:border-sky-500">
+                    <option value="fa-store">🏪 متجر / فرع عام (Store)</option>
+                    <option value="fa-shop">🏬 فرع رئيسي (Main Branch)</option>
+                    <option value="fa-cake-candles">🎂 قسم الحلويات والحلواني (Bakery)</option>
+                    <option value="fa-truck">🚚 فرع توصيل / مستودع (Warehouse)</option>
+                </select>
+            </div>
+            <div class="flex justify-end gap-2 pt-2">
+                <button onclick="closeAddBranchModal()" class="px-4 py-2 text-xs font-bold text-slate-400 hover:text-white">إلغاء</button>
+                <button onclick="saveNewBranch()" class="px-4 py-2 bg-[#0284c7] hover:bg-[#0369a1] text-white text-xs font-bold rounded-xl shadow">حفظ الفرع</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="p-4 text-center text-xs text-slate-400 border-t border-slate-800 mt-12 bg-[#1e293b] no-print">
+        Mohamed Eid - Quality Control Portfolio & Audit System &copy; 2026
+    </footer>
+
+    <!-- App JavaScript Logic -->
+    <script>
+        let isAdmin = false; // By default: Public View (Read-Only)
+        const ADMIN_PASSWORD = "ME01"; // كلمة سر محمد (يمكنك تغييرها لأي رقم سرّي تحبه)
+
+        function toggleAdminMode() {
+            if (!isAdmin) {
+                let pass = prompt("أدخل كلمة المرور الخاصة بلوحة تحكم محمد:");
+                if (pass === ADMIN_PASSWORD) {
+                    isAdmin = true;
+                    document.getElementById('adminIcon').className = "fa-solid fa-lock-open text-emerald-400";
+                    document.getElementById('adminLoginBtn').className = "bg-emerald-950/60 hover:bg-emerald-900/80 text-emerald-300 border border-emerald-500/50 px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all";
+                    document.getElementById('adminText').innerText = "وضع الإدارة (مفعل)";
+                    alert("تم تفعيل وضع الإدارة بنجاح يا محمد! يمكنك الآن التعديل والإضافة.");
+                    applyAdminState();
+                } else if (pass !== null) {
+                    alert("كلمة المرور غير صحيحة!");
+                }
+            } else {
+                isAdmin = false;
+                document.getElementById('adminIcon').className = "fa-solid fa-lock text-amber-400";
+                document.getElementById('adminLoginBtn').className = "bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 px-3 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 transition-all";
+                document.getElementById('adminText').innerText = "الإدارة";
+                alert("تم الخروج من وضع الإدارة وأصبح الموقع للقراءة فقط.");
+                applyAdminState();
+            }
+        }
+
+        function applyAdminState() {
+            const adminElements = document.querySelectorAll('.admin-only');
+            adminElements.forEach(el => {
+                if (isAdmin) {
+                    el.classList.remove('hidden');
+                } else {
+                    el.classList.add('hidden');
+                }
+            });
+            if (selectedBranchId) {
+                const branch = branches.find(b => b.id === selectedBranchId);
+                if (branch) renderVisitsList(branch);
+            }
+        }
+
+        let branches = JSON.parse(localStorage.getItem('me_branches')) || [
+            {
+                id: 'br_1',
+                name: 'فرع الدمام الرئيسي',
+                icon: 'fa-shop',
+                visits: [
+                    {
+                        date: '2026-03-01',
+                        ratingPercent: 70,
+                        notes: [
+                            'الالتزام بالزي الموحد وجودة التغليف ممتازة.',
+                            'يحتاج قسم التبريد لمتابعة درجات الحرارة بشكل أدق.'
+                        ]
+                    },
+                    {
+                        date: '2026-03-15',
+                        ratingPercent: 85,
+                        notes: [
+                            'تم معالجة ملحوظة التبريد بنجاح.',
+                            'تحسن ممتاز في الالتزام بمعايير سلامة الغذاء.'
+                        ]
+                    }
+                ]
+            }
+        ];
+
+        let selectedBranchId = null;
+        let chartInstance = null;
+        let trendChartInstance = null;
+
+        function switchPage(pageId) {
+            document.getElementById('cvPage').classList.add('hidden');
+            document.getElementById('auditsPage').classList.add('hidden');
+
+            document.getElementById('btnPageCv').className = "px-4 py-2 rounded-lg text-xs md:text-sm font-semibold text-slate-300 hover:text-white transition-all flex items-center gap-2";
+            document.getElementById('btnPageAudits').className = "px-4 py-2 rounded-lg text-xs md:text-sm font-semibold text-slate-300 hover:text-white transition-all flex items-center gap-2";
+
+            if(pageId === 'cvPage') {
+                document.getElementById('cvPage').classList.remove('hidden');
+                document.getElementById('btnPageCv').className = "active-tab px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all flex items-center gap-2";
+            } else {
+                document.getElementById('auditsPage').classList.remove('hidden');
+                document.getElementById('btnPageAudits').className = "active-tab px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all flex items-center gap-2";
+                renderBranchesGrid();
+            }
+        }
+
+        function uploadLogo(event) {
+            if (!isAdmin) return;
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('logoPreview');
+                    img.src = e.target.result;
+                    img.classList.remove('hidden');
+                    document.getElementById('logoPlaceholder').classList.add('hidden');
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveData() {
+            localStorage.setItem('me_branches', JSON.stringify(branches));
+        }
+
+        function renderBranchesGrid() {
+            const grid = document.getElementById('branchesGrid');
+            grid.innerHTML = '';
+
+            branches.forEach(branch => {
+                const card = document.createElement('div');
+                const lastVisit = branch.visits.length > 0 ? branch.visits[branch.visits.length - 1] : null;
+                const lastRating = lastVisit ? lastVisit.ratingPercent : 0;
+
+                card.onclick = () => openBranchPanel(branch.id);
+                card.className = `dark-card p-4 rounded-2xl text-center cursor-pointer transition-all hover:border-sky-400 hover:-translate-y-1 ${selectedBranchId === branch.id ? 'border-2 border-[#0284c7] bg-sky-950/40' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="w-12 h-12 mx-auto rounded-xl bg-sky-600/20 text-sky-400 border border-sky-500/30 flex items-center justify-center text-xl mb-2">
+                        <i class="fa-solid ${branch.icon}"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-xs md:text-sm line-clamp-1">${branch.name}</h4>
+                    <div class="mt-2 text-[11px] text-slate-400">
+                        التقييم: <span class="font-bold text-[#38bdf8]">${lastRating}%</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function openAddBranchModal() { if(isAdmin) document.getElementById('addBranchModal').classList.remove('hidden'); }
+        function closeAddBranchModal() { document.getElementById('addBranchModal').classList.add('hidden'); }
+
+        function saveNewBranch() {
+            if(!isAdmin) return;
+            const name = document.getElementById('newBranchName').value.trim();
+            const icon = document.getElementById('newBranchIcon').value;
+            if(!name) return alert('الرجاء كتابة اسم الفرع');
+
+            const newBranch = {
+                id: 'br_' + Date.now(),
+                name: name,
+                icon: icon,
+                visits: [{
+                    date: new Date().toISOString().split('T')[0],
+                    ratingPercent: 90,
+                    notes: ['تم زيارة الفرع واكتشاف بعض الملاحظات البسيطة.']
+                }]
+            };
+
+            branches.push(newBranch);
+            saveData();
+            closeAddBranchModal();
+            document.getElementById('newBranchName').value = '';
+            renderBranchesGrid();
+            openBranchPanel(newBranch.id);
+        }
+
+        function openBranchPanel(branchId) {
+            selectedBranchId = branchId;
+            renderBranchesGrid();
+
+            const branch = branches.find(b => b.id === branchId);
+            if(!branch) return;
+
+            document.getElementById('branchAuditPanel').classList.remove('hidden');
+            document.getElementById('panelBranchName').innerText = branch.name;
+            document.getElementById('panelBranchIcon').innerHTML = `<i class="fa-solid ${branch.icon}"></i>`;
+
+            renderVisitsList(branch);
+            renderCharts(branch);
+        }
+
+        function closeBranchPanel() {
+            selectedBranchId = null;
+            document.getElementById('branchAuditPanel').classList.add('hidden');
+            renderBranchesGrid();
+        }
+
+        function deleteCurrentBranch() {
+            if(!isAdmin) return;
+            if(confirm('هل أنت تأكد من حذف هذا الفرع وكافة بيانات مراجعاته؟')) {
+                branches = branches.filter(b => b.id !== selectedBranchId);
+                saveData();
+                closeBranchPanel();
+            }
+        }
+
+        function exportBranchPDF() {
+            window.print();
+        }
+
+        function renderVisitsList(branch) {
+            const container = document.getElementById('visitsContainer');
+            container.innerHTML = '';
+
+            branch.visits.forEach((visit, vIndex) => {
+                const scoreOutOf10 = (visit.ratingPercent / 10).toFixed(1);
+
+                let progressBadge = '';
+                if (vIndex > 0) {
+                    const prevRating = branch.visits[vIndex - 1].ratingPercent;
+                    const diff = visit.ratingPercent - prevRating;
+                    if (diff > 0) {
+                        progressBadge = `<span class="text-xs font-bold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30"><i class="fa-solid fa-arrow-trend-up"></i> +${diff}% (تحسن)</span>`;
+                    } else if (diff < 0) {
+                        progressBadge = `<span class="text-xs font-bold text-red-400 bg-red-950/60 px-2 py-0.5 rounded border border-red-500/30"><i class="fa-solid fa-arrow-trend-down"></i> ${diff}% (تدهور)</span>`;
+                    } else {
+                        progressBadge = `<span class="text-xs font-bold text-slate-400 bg-slate-800 px-2 py-0.5 rounded">= (ثابت)</span>`;
+                    }
+                }
+
+                const card = document.createElement('div');
+                card.className = "p-5 rounded-2xl bg-slate-900 border border-slate-700 space-y-4";
+
+                let notesHtml = '';
+                visit.notes.forEach((note, nIndex) => {
+                    notesHtml += `
+                        <div class="flex items-center gap-2">
+                            <input type="text" value="${note}" ${!isAdmin ? 'disabled' : ''} onchange="updateNoteText(${vIndex}, ${nIndex}, this.value)" class="flex-grow bg-[#0f172a] border border-slate-700 rounded-lg p-2 text-xs text-slate-200 outline-none focus:border-sky-500 disabled:opacity-70">
+                            ${isAdmin ? `<button onclick="deleteNote(${vIndex},${nIndex})" class="text-slate-400 hover:text-red-400 p-1.5 no-print"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="flex flex-col md:flex-row justify-between md:items-center gap-3 border-b border-slate-800 pb-3">
+                        <div class="flex items-center gap-4">
+                            <div>
+                                <label class="text-[10px] font-bold text-[#38bdf8] uppercase block">تاريخ المراقبة</label>
+                                <input type="date" value="${visit.date}" ${!isAdmin ? 'disabled' : ''} onchange="updateVisitField(${vIndex}, 'date', this.value)" class="bg-[#0f172a] border border-slate-700 rounded-lg p-1.5 text-xs text-white outline-none disabled:opacity-70">
+                            </div>
+                            <div>
+                                ${progressBadge}
+                            </div>
+                        </div>
+
+                        <!-- Rating Displays -->
+                        <div class="flex items-center gap-3 bg-[#0f172a] px-4 py-2 rounded-xl border border-slate-700">
+                            <div>
+                                <span class="text-[10px] text-slate-400 block font-semibold">النسبة المئوية</span>
+                                <div class="flex items-center gap-1">
+                                    <input type="number" min="0" max="100" value="${visit.ratingPercent}" ${!isAdmin ? 'disabled' : ''} oninput="updateVisitField(${vIndex}, 'ratingPercent', this.value)" class="w-12 bg-transparent font-black text-[#38bdf8] text-base outline-none text-right disabled:opacity-70">
+                                    <span class="text-[#38bdf8] font-bold">%</span>
+                                </div>
+                            </div>
+                            <div class="h-6 w-px bg-slate-700"></div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 block font-semibold">التقييم</span>
+                                <span class="font-black text-white text-base">${scoreOutOf10} <span class="text-xs text-slate-500 font-normal">/ 10</span></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Notes Section -->
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-slate-300">ملاحظات التفتيش والزيارة:</span>
+                            ${isAdmin ? `<button onclick="addNoteField(${vIndex})" class="text-[11px] text-[#38bdf8] hover:underline font-semibold no-print">+ إضافة خانة ملاحظة</button>` : ''}
+                        </div>
+                        <div class="space-y-2">${notesHtml}</div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+        }
+
+        function addNewVisitRecord() {
+            if(!isAdmin) return;
+            const branch = branches.find(b => b.id === selectedBranchId);
+            if(!branch) return;
+
+            branch.visits.push({
+                date: new Date().toISOString().split('T')[0],
+                ratingPercent: 85,
+                notes: ['ملاحظة زيارة جديدة']
+            });
+
+            saveData();
+            renderVisitsList(branch);
+            renderCharts(branch);
+            renderBranchesGrid();
+        }
+
+        function updateVisitField(vIndex, field, value) {
+            if(!isAdmin) return;
+            const branch = branches.find(b => b.id === selectedBranchId);
+            if(!branch) return;
+
+            if(field === 'ratingPercent') value = Math.min(100, Math.max(0, parseFloat(value) || 0));
+
+            branch.visits[vIndex][field] = value;
+            saveData();
+            if(field === 'ratingPercent') {
+                renderVisitsList(branch);
+                renderCharts(branch);
+                renderBranchesGrid();
+            }
+        }
+
+        function addNoteField(vIndex) {
+            if(!isAdmin) return;
+            const branch = branches.find(b => b.id === selectedBranchId);
+            branch.visits[vIndex].notes.push('ملاحظة جديدة...');
+            saveData();
+            renderVisitsList(branch);
+        }
+
+        function updateNoteText(vIndex, nIndex, text) {
+            if(!isAdmin) return;
+            const branch = branches.find(b => b.id === selectedBranchId);
+            branch.visits[vIndex].notes[nIndex] = text;
+            saveData();
+        }
+
+        function deleteNote(vIndex, nIndex) {
+            if(!isAdmin) return;
+            const branch = branches.find(b => b.id === selectedBranchId);
+            branch.visits[vIndex].notes.splice(nIndex, 1);
+            saveData();
+            renderVisitsList(branch);
+        }
+
+        function renderCharts(branch) {
+            const labels = branch.visits.map((v, i) => `زيارة ${i + 1} (${v.date})`);
+            const dataScores = branch.visits.map(v => v.ratingPercent);
+
+            const minVal = Math.max(0, Math.min(...dataScores) - 10);
+            const maxVal = Math.min(100, Math.max(...dataScores) + 10);
+
+            const ctxBar = document.getElementById('ratingsChart').getContext('2d');
+            if(chartInstance) chartInstance.destroy();
+
+            chartInstance = new Chart(ctxBar, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'نسبة التقييم %',
+                        data: dataScores,
+                        backgroundColor: 'rgba(2, 132, 199, 0.8)',
+                        borderColor: '#38bdf8',
+                        borderWidth: 1.5,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { min: minVal, max: maxVal, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+                        y: { grid: { display: false }, ticks: { color: '#f8fafc', font: { weight: '600', size: 11 } } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+
+            const ctxTrend = document.getElementById('trendChart').getContext('2d');
+            if(trendChartInstance) trendChartInstance.destroy();
+
+            trendChartInstance = new Chart(ctxTrend, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'منحنى التقييم',
+                        data: dataScores,
+                        borderColor: '#f87171',
+                        backgroundColor: 'rgba(248, 113, 113, 0.15)',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ef4444',
+                        pointBorderColor: '#ffffff',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        tension: 0.2,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+                        y: { min: minVal, max: maxVal, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#f8fafc', font: { weight: '600', size: 11 } } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+
+        renderBranchesGrid();
+        applyAdminState();
+    </script>
+</body>
+</html>
