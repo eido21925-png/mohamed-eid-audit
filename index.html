@@ -311,7 +311,7 @@
     <!-- App JavaScript Logic -->
     <script>
         let isAdmin = false; // By default: Public View (Read-Only)
-        const ADMIN_PASSWORD = "123"; // كلمة سر محمد
+        const ADMIN_PASSWORD = "ME01"; // كلمة سر محمد (يمكنك تغييرها لأي رقم سرّي تحبه)
 
         function toggleAdminMode() {
             if (!isAdmin) {
@@ -395,6 +395,21 @@
                 document.getElementById('auditsPage').classList.remove('hidden');
                 document.getElementById('btnPageAudits').className = "active-tab px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all flex items-center gap-2";
                 renderBranchesGrid();
+            }
+        }
+
+        function uploadLogo(event) {
+            if (!isAdmin) return;
+            const file = event.target.files[0];
+            if(file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('logoPreview');
+                    img.src = e.target.result;
+                    img.classList.remove('hidden');
+                    document.getElementById('logoPlaceholder').classList.add('hidden');
+                }
+                reader.readAsDataURL(file);
             }
         }
 
