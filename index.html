@@ -77,21 +77,18 @@
             <!-- Header Section -->
             <div class="dark-card rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 border-sky-500/30">
                 
-                <!-- Logo Box -->
+                <!-- Permanent Logo Box -->
                 <div class="relative group">
                     <div class="w-36 h-36 md:w-44 md:h-44 rounded-2xl bg-black border-2 border-slate-700 flex flex-col items-center justify-center p-2 text-center shadow-inner overflow-hidden">
-                        <img id="logoPreview" src="" alt="ME Logo" class="hidden w-full h-full object-contain">
-                        <div id="logoPlaceholder" class="flex flex-col items-center">
+                        <!-- هنا بيحمل صورة logo.png تلقائياً ولو مش موجودة بيعرض الأيقونة الاحتياطية -->
+                        <img id="logoImage" src="logo.png" onerror="this.style.display='none'; document.getElementById('logoPlaceholder').style.display='flex';" alt="ME Logo" class="w-full h-full object-contain">
+                        
+                        <div id="logoPlaceholder" class="flex-col items-center hidden">
                             <i class="fa-solid fa-chart-line text-4xl text-[#0284c7] mb-1"></i>
                             <span class="font-black text-2xl text-[#38bdf8] tracking-wider">ME</span>
                             <span class="text-[9px] text-slate-400 font-medium">MOHAMED EID</span>
                         </div>
                     </div>
-                    <!-- Upload allowed only in Admin Mode -->
-                    <label id="logoUploadLabel" class="absolute inset-0 bg-black/70 rounded-2xl text-xs text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer font-semibold hidden admin-only">
-                        <i class="fa-solid fa-upload mr-1"></i> Change Logo
-                        <input type="file" accept="image/*" class="hidden" onchange="uploadLogo(event)">
-                    </label>
                 </div>
 
                 <!-- Name & Contact Info -->
@@ -314,7 +311,7 @@
     <!-- App JavaScript Logic -->
     <script>
         let isAdmin = false; // By default: Public View (Read-Only)
-        const ADMIN_PASSWORD = "ME01"; // كلمة سر محمد (يمكنك تغييرها لأي رقم سرّي تحبه)
+        const ADMIN_PASSWORD = "123"; // كلمة سر محمد
 
         function toggleAdminMode() {
             if (!isAdmin) {
@@ -398,21 +395,6 @@
                 document.getElementById('auditsPage').classList.remove('hidden');
                 document.getElementById('btnPageAudits').className = "active-tab px-4 py-2 rounded-lg text-xs md:text-sm font-semibold transition-all flex items-center gap-2";
                 renderBranchesGrid();
-            }
-        }
-
-        function uploadLogo(event) {
-            if (!isAdmin) return;
-            const file = event.target.files[0];
-            if(file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const img = document.getElementById('logoPreview');
-                    img.src = e.target.result;
-                    img.classList.remove('hidden');
-                    document.getElementById('logoPlaceholder').classList.add('hidden');
-                }
-                reader.readAsDataURL(file);
             }
         }
 
